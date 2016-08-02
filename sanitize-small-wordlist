@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if ! ([ $# -eq 1 ] && [ -r "$1" ]); then
+    echo "$0: sanitize a short wordlist"        > /dev/stderr
+    echo ""                                         > /dev/stderr
+    echo "Usage: $0 <wordlist>"                     > /dev/stderr
+    exit 1
+fi
+
+backup="/tmp/.sanitize-small-wordlist.bak"
+
+cp "$1" "$backup" || exit 1
+
+< "$backup" tr '[:upper:]' '[:lower:]' | \
+    duplicut -o /dev/stdout | \
+    mkvstrength /usr/share/john/stats | \
+    sort -n | \
+    cut-num-prefix \
+    > "$1"
+

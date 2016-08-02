@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+INFILE="$1"
+if (! [ -t 0 ] || [ "$INFILE" == "-" ]); then
+    INFILE="/dev/stdin"
+elif ! ([ $# -eq 1 ] && [ -r "$1" ]); then
+    echo "$0: sort a wordlist by occurences"        > /dev/stderr
+    echo ""                                         > /dev/stderr
+    echo "Usage: $0 <wordlist>"                     > /dev/stderr
+    exit 1
+fi
+
+sort -T "$HOME" "$INFILE" | uniq -c | sed 's/^ *//g' | sort -T "$HOME" -nr

@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+
+INFILE="$2"
+if (! [ -t 0 ] || [ "$INFILE" == "-" ]); then
+    INFILE="/dev/stdin"
+elif ! ([ $# -eq 2 ] && [ -r "$1" -a -r "$2" ]); then
+    echo "$0: prefix wordlist with markov strength" > /dev/stderr
+    echo ""                                         > /dev/stderr
+    echo "Usage: $0 <statsfile> <wordlist>"         > /dev/stderr
+    exit 1
+fi
+
+
+mkvcalcproba "$1" "$INFILE" | \
+python3 -c '
+import sys
+
+while True:
+    line = sys.stdin.buffer.readline()
+    if not line:
+        break
+    elems = line.rsplit(b"\t", 5)
+    assert len(elems) == 6
+    sys.stdout.buffer.write(b"%s %s\n" % (elems[2], elems[0]))
+'
