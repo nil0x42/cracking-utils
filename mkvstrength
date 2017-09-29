@@ -11,7 +11,13 @@ elif ! ([ $# -eq 2 ] && [ -r "$1" -a -r "$2" ]); then
 fi
 
 
-mkvcalcproba "$1" "$INFILE" | \
+STATFILE="$1"
+if [ -z "$1" ]; then
+    STATFILE="/usr/share/john/stats"
+fi
+
+
+mkvcalcproba "$STATFILE" "$INFILE" | \
 python3 -c '
 import sys
 
