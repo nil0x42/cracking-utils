@@ -1,5 +1,17 @@
 #!/usr/bin/env python3
 
+# undo the result of 'uniq -c'
+# ----- input: -----
+#   3 password
+#   2 test
+# ----- output: ----
+#   password
+#   password
+#   password
+#   test
+#   test
+
+
 import sys, os, re
 
 if len(sys.argv) == 1 and not sys.stdin.isatty():
