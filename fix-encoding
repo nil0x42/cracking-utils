@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+import sys, os, re
+import html
+
+def help():
+    string = """
+    Usage: %s [FILE]
+    Try to revert encoded passwords:
+        - \\xFF syntax
+        - unescape html entities
+
+    With no FILE, or when FILE is -, read standard input.
+    """
+    string = string.replace("%s", sys.argv[0])
+    string = string.replace(os.linesep + "    ", os.linesep)
+    string = os.linesep.join(string.split(os.linesep)[1:-1])
+    print(string)
+    sys.exit(0)
+
+# handle reading from stdin
+stdin = "/dev/stdin"
+if len(sys.argv) == 1 and not sys.stdin.isatty():
+    sys.argv.append(stdin)
+elif len(sys.argv) == 2 and sys.argv[1] == "-":
+    sys.argv[1] = stdin
+
+if len(sys.argv) != 2 or not os.path.exists(sys.argv[1]):
+    help()
+
+# regex to extract line contents without numeric prefix
+regex = re.compile(b"\\\\x[0-9a-fA-F]{2}")
+
+for line in open(sys.argv[1], 'rb'):
+    # \xFF syntax
+    # 
+    for match in regex.findall(line):
+        match = match.lower()
+        val = bytes.fromhex(match[2:].decode())
+        line = line.replace(match, val)
+
+    # html entities
+    try:
+        line = html.unescape(line.decode()).encode()
+    except:
+        pass
+
+    sys.stdout.buffer.write(line)
