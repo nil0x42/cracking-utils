@@ -20,7 +20,7 @@ elif len(sys.argv) == 2 and sys.argv[1] == "-":
     sys.argv[1] = "/dev/stdin"
 
 if len(sys.argv) != 2 or not os.path.isfile(sys.argv[1]):
-    sys.exit("Usage: %s <occurences-prefixed-wordlist.txt>")
+    sys.exit("Usage: %s <occurences-prefixed-wordlist.txt>" % sys.argv[0])
 
 regex = re.compile(b"^\s*([0-9]+)\s+(.+?)?$")
 input_file = open(sys.argv[1], 'rb')
